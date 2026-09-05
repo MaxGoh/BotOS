@@ -1,0 +1,23 @@
+# Local environment — never commit real credentials
+.env
+.env.*
+!.env.example
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+!.vscode/extensions.json
+
+# Logs and temp
+*.log
+tmp/
+.cache/
+
+# Build output (placeholders — refine when a toolchain lands)
+dist/
+build/
+coverage/
