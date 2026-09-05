@@ -39,7 +39,7 @@ check_required_files() {
 		Makefile .gitignore .env.example \
 		docs/DEPENDENCY-GRAPH.md docs/agdr/README.md \
 		docs/agdr/AGDR-0000-template.md \
-		scripts/bootstrap.sh scripts/verify.sh \
+		scripts/bootstrap.sh scripts/verify.sh scripts/test.sh \
 		.github/workflows/ci.yml
 	do
 		[ -f "$f" ] || fail "missing required file: $f"
@@ -65,8 +65,11 @@ check_shell_syntax() {
 		head -n 1 "$f" | grep -q '^#!' || fail "$f: missing shebang"
 	done
 	if command -v shellcheck >/dev/null 2>&1; then
+		# -x follows sourced files. Without it a helper library looks like a
+		# pile of undefined variables to shellcheck, and the scripts that
+		# source it fail the gate for no real reason.
 		for f in $(tracked_matching '\.sh$'); do
-			shellcheck -s sh "$f" || fail "$f: shellcheck reported issues"
+			shellcheck -s sh -x "$f" || fail "$f: shellcheck reported issues"
 		done
 	else
 		printf '  note  shellcheck not installed; skipped (optional)\n'
@@ -132,6 +135,56 @@ check_trailing_whitespace() {
 	done
 }
 
+# A skill the harness cannot load is worse than no skill: it looks like the
+# workflow is documented when nothing will ever read it. Frontmatter `name`
+# and `description` are what make a skill discoverable, and the name has to
+# match the directory the loader found it in.
+check_skills() {
+	start "agent skills are loadable"
+	[ -d .claude/skills ] || {
+		printf '  note  no .claude/skills directory; skipped\n'
+		return 0
+	}
+	found=0
+	for dir in .claude/skills/*/; do
+		[ -d "$dir" ] || continue
+		found=$((found + 1))
+		name=$(basename "$dir")
+		manifest="${dir}SKILL.md"
+		if [ ! -f "$manifest" ]; then
+			fail ".claude/skills/$name: has no SKILL.md"
+			continue
+		fi
+		# Frontmatter is the block between the first two `---` lines.
+		front=$(awk 'NR==1 && $0 != "---" { exit } NR>1 && $0 == "---" { exit } NR>1' "$manifest")
+		declared=$(printf '%s\n' "$front" | sed -n 's/^name:[[:space:]]*//p' | head -n 1)
+		if [ -z "$declared" ]; then
+			fail ".claude/skills/$name: frontmatter is missing 'name'"
+		elif [ "$declared" != "$name" ]; then
+			fail ".claude/skills/$name: frontmatter name '$declared' does not match its directory"
+		fi
+		printf '%s\n' "$front" | grep -q '^description:[[:space:]]*[^[:space:]]' \
+			|| fail ".claude/skills/$name: frontmatter is missing 'description'"
+	done
+	[ "$found" -gt 0 ] || printf '  note  .claude/skills exists but is empty\n'
+}
+
+# The test suite is part of the gate, so `make verify` remains the one command
+# to run. scripts/test.sh executes *this* script inside scratch copies of the
+# repo; BOTOS_SKIP_TESTS is how those nested runs avoid re-entering the suite.
+check_tests() {
+	start "test suite"
+	if [ "${BOTOS_SKIP_TESTS:-0}" = "1" ]; then
+		printf '  note  nested verify run; suite skipped by BOTOS_SKIP_TESTS\n'
+		return 0
+	fi
+	if [ ! -x scripts/test.sh ]; then
+		fail "scripts/test.sh is missing or not executable"
+		return 0
+	fi
+	./scripts/test.sh || fail "test suite failed (output above)"
+}
+
 # --- runner ---------------------------------------------------------------
 
 run_all() {
@@ -142,6 +195,10 @@ run_all() {
 	check_env_example
 	check_markdown_links
 	check_trailing_whitespace
+	check_skills
+	# Last: the static checks above are fast, and a developer should see a
+	# typo'd link before waiting on the suite.
+	check_tests
 }
 
 main() {

@@ -5,88 +5,111 @@
 
 ## Summary
 
-Before this change the repository contained one file, `LICENSE`. All nine
-dimensions scored `absent` and the level was **Not ready**.
+The previous evaluation scored 5 present, 2 partial, 2 absent. This one scores
+**7 present, 1 partial, 1 absent**: dimension 4 (build/test/verify) rose from
+partial to present, and dimension 6 (skills) from absent to present.
 
-The foundation scaffold moved five dimensions to `present` and two to
-`partial`. The level remains **Not ready**, and that is the honest result: the
-rollup requires no dimension to be `absent`, and dimensions 6 (skills) and 9
-(full runnability) cannot be satisfied until BotOS has a product definition and
-application code. **The remaining gaps are bounded by the repository being
-greenfield, not by the quality of the scaffold.**
+The level is still **Not ready**, and that is still the honest result. The
+rollup requires no dimension to be `absent`, and dimension 9 (full
+runnability) cannot be met by a repository with no application in it.
+
+**The one remaining blocker is not a scaffold defect — it is a missing
+product design.** No approved design has reached this repository across two
+changes now. Dimensions 1 and 3 carry deliberately unfilled product sections,
+dimension 5 cannot install a toolchain nobody has chosen, and dimension 9
+cannot document how to run an application that does not exist. Every one of
+those unblocks the moment a human records what BotOS is.
 
 ## Dimension scorecard
 
 | # | Dimension | Score | Notes |
 |---|-----------|-------|-------|
-| 1 | Agent instructions | present | `AGENTS.md` covers architecture, commands, conventions, guardrails; `CLAUDE.md` points to it so harnesses share one source of truth. |
-| 2 | Decision records | present | `docs/agdr/` with `README.md` (when/how), `AGDR-0000-template.md`, and a first real record for this change. |
-| 3 | Codebase orientation | present | `docs/DEPENDENCY-GRAPH.md` maps every directory. The module-edge section is deliberately empty — there is no application code to draw — and is marked TODO for the first module. |
-| 4 | Build / test / verify loop | partial | `make verify` is real, enforced in CI, and was negative-tested. But there is no build step and no test suite: `make test` fails loudly rather than passing vacuously. Upgrades to `present` when a real suite lands. |
-| 5 | Setup / bootstrap contract | partial | `make bootstrap` checks the toolchain and exits non-zero when a required tool is missing, but installs nothing because there is nothing to install. It becomes a real contract when a stack is chosen. |
-| 6 | Skills | absent | No `.claude/skills/`. Skills encode real workflows; authoring them for a product that does not exist yet would be invention, not documentation. Flagged for a human. |
-| 7 | Guardrails & safety | present | `AGENTS.md` "Guardrails & Safety" names what needs approval, what must never be committed, and the MIT-license guardrail — which `verify.sh` now mechanically enforces. |
-| 8 | Secrets & env config | present | `.env.example` documents the names-and-placeholders contract; `.gitignore` excludes `.env`; `verify.sh` fails on a populated value or a credential-shaped string in any tracked file. No env vars are referenced in code, because there is no code. |
-| 9 | Full runnability | absent | There is no application to run, so no full-app run command can exist. Not a scaffold defect — a precondition that only product code can satisfy. Needs live verification once it does. |
+| 1 | Agent instructions | present | `AGENTS.md` covers commands, tests, conventions and guardrails; `CLAUDE.md` points to it so harnesses share one source of truth. "What This Is" and "Architecture" remain explicitly unfilled — flagged, not silently green. |
+| 2 | Decision records | present | `docs/agdr/` holds a when/how guide, a template, and two real records — one per substantive change so far. Append-only; reversals supersede rather than delete. |
+| 3 | Codebase orientation | present | Directory map covers every path that exists, and the scaffold's own dependency edges are now drawn — including the verify↔test cycle and the guard that bounds it. The application-module section stays empty because there are no modules. |
+| 4 | Build / test / verify loop | present | Was partial. `scripts/test.sh` runs 39 cases across `tests/test_{verify,bootstrap,make}.sh`; `make test` is a real runner and `check_tests` is registered in `run_all()`, so `make verify` remains the single gate CI runs. No build step, because there is nothing to compile. |
+| 5 | Setup / bootstrap contract | partial | `make bootstrap` checks the toolchain, names what is missing, and exits non-zero — behaviour now pinned by tests rather than asserted. It still installs nothing, because no toolchain has been chosen. Becomes a real contract when one is. |
+| 6 | Skills | present | Was absent. `.claude/skills/verifying-changes/` and `.claude/skills/extending-the-verify-loop/` encode workflows that exist today and were exercised in writing them. `check_skills` fails the gate on a missing `SKILL.md`, missing `name`/`description` frontmatter, or a name that does not match its directory. |
+| 7 | Guardrails & safety | present | `AGENTS.md` names what needs approval and what must never be committed; the MIT-license guardrail and the secret patterns are mechanically enforced by the gate, and both enforcement paths are now covered by tests. A "no vacuous tests" guardrail was added. |
+| 8 | Secrets & env config | present | `.env.example` documents the names-and-placeholders contract; `.gitignore` excludes `.env`; the gate fails on a populated value or a credential-shaped string in any tracked file. Both the failing and the accepted placeholder forms are tested. |
+| 9 | Full runnability (preconditions) | absent | No application exists, so no full-app run command can exist and no live run can be confirmed. A "how to run BotOS" skill was deliberately not written for the same reason. Blocked on product code existing at all. |
 
-Tally: 5 present, 2 partial, 2 absent.
+Tally: 7 present, 1 partial, 1 absent.
 
 ## Remediated (working tree, uncommitted)
 
-- `AGENTS.md` — agent/contributor contract; seeds dimensions 1, 3, and 7.
-- `CLAUDE.md` — pointer to `AGENTS.md`, avoiding two contracts that drift apart.
-- `README.md` — human entry point: quick start, layout, dependency stance.
-- `CONTRIBUTING.md` — the short version of the contract, plus rejection criteria.
-- `SECURITY.md` — private vulnerability reporting and secret-handling policy.
-- `docs/agdr/README.md` — when and how to write a decision record.
-- `docs/agdr/AGDR-0000-template.md` — the template.
-- `docs/agdr/AGDR-2026-09-05-001-agent-ready-foundation.md` — this change's record.
-- `docs/DEPENDENCY-GRAPH.md` — directory map and dependency-edge stub.
-- `Makefile` — `help`, `bootstrap`, `verify`, `check`, `test`, `clean`.
-- `scripts/verify.sh` — the single gate; seven checks, extensible via `run_all`.
-- `scripts/bootstrap.sh` — toolchain check.
-- `.github/workflows/ci.yml` — runs `make verify` and nothing else.
-- `.github/PULL_REQUEST_TEMPLATE.md` — requires evidence, not assertion.
-- `.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.{md,yml}` — intake.
-- `.env.example` — env contract, names and placeholders only.
-- `.gitignore` — excludes `.env` while keeping `.env.example` tracked.
-- `.editorconfig`, `.gitattributes` — consistent whitespace and LF endings.
+Authored by this change:
 
-`LICENSE` was not modified, and is now protected by a check.
+- `scripts/test.sh` — suite runner; globs `tests/test_*.sh`, fails an empty suite.
+- `tests/lib.sh` — assertions, plus a fixture builder that clones the working
+  tree into a scratch git repo so checks are exercised against a real layout.
+- `tests/test_verify.sh` — 23 cases; every gate check, each proved to fire,
+  including the optional shellcheck lint path.
+- `tests/test_bootstrap.sh` — 5 cases; the setup contract's success and
+  failure paths, with the required-tool set pinned by name and count.
+- `tests/test_make.sh` — 11 cases; `Makefile` targets and the CI wiring.
+- `.claude/skills/verifying-changes/SKILL.md` — run the gate, read the failures.
+- `.claude/skills/extending-the-verify-loop/SKILL.md` — add a check, a test, or
+  a toolchain, without splitting the gate in two.
+- `scripts/verify.sh` — added `check_tests` and `check_skills`, registered both
+  in `run_all()`, added `scripts/test.sh` to the required-file set.
+- `Makefile` — `make test` now runs the suite instead of exiting 1 by design.
+- `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `docs/DEPENDENCY-GRAPH.md` —
+  updated in the same change, per the docs-live-with-the-code rule.
+- `docs/agdr/AGDR-2026-09-05-002-test-the-scaffold.md` — the decision record,
+  including what was deliberately not done and why.
+
+`LICENSE` was not modified, and remains protected by a check.
 
 ## Verification performed
 
 Not merely written — exercised:
 
-- `make verify` passes: 7 checks, 0 failures.
+- `make verify` passes: **9 checks, 0 failures**, which includes the suite.
+- `make test` passes: **3 test files, 39 cases, 0 failures**.
 - `make bootstrap` passes and reports the toolchain.
-- Every check was **negative-tested** in a scratch copy: a missing required
-  file, a relicensed `LICENSE`, altered copyright attribution, a shell syntax
-  error, a non-executable script, trailing whitespace, a broken relative
-  markdown link, a populated `.env.example` value, and three credential shapes
-  (AWS key, PEM private key, GitHub token). All eleven were caught; an
-  unmodified control copy still passed.
-- `shellcheck -s sh` is clean on both scripts. This caught a real defect —
-  SC2016 in `scripts/bootstrap.sh` — that would have failed CI, because
-  GitHub's `ubuntu-latest` ships shellcheck while this box did not. It was
-  fixed, and the shellcheck path was then confirmed to fail the gate on a
-  genuine violation (SC3014).
+- **Mutation-tested, which is the claim that matters.** Each of the nine checks
+  was removed from `run_all()` in a scratch copy in turn; the suite failed
+  every time. The optional shellcheck sub-path was stubbed out separately and
+  was also caught. Seven further mutations were injected into the wiring — `make
+  test` not calling the runner, `check` no longer aliasing `verify`, bootstrap
+  always exiting 0, bootstrap dropping the `.env` hint, the runner passing on
+  an empty suite, CI no longer running `make verify`, and `make` downgraded
+  from required to optional — and all seven were caught.
+- One case initially passed for the wrong reason: the empty-`PATH` bootstrap
+  test stayed red when `make` was made optional, because `git` was missing in
+  that run too. It was tightened to assert each required tool by name and to
+  pin the count. Re-running the mutation then caught it. A test that passes for
+  the wrong reason is the failure mode this whole exercise exists to prevent.
+- **CI-only lint failure, found and fixed before shipping.** CI runs on
+  `ubuntu-latest`, which ships shellcheck; this box did not. Installing it and
+  running the gate the way CI would showed the new files failing on SC1091 and
+  SC2154 — shellcheck cannot follow `. tests/lib.sh` without `-x`, so the
+  library's variables looked undefined. The gate now passes `-x`. This is the
+  second time this class of drift has bitten the repository, which is why the
+  lint path now has a test of its own.
+- The recursion between the gate and the suite was checked in both directions:
+  `BOTOS_SKIP_TESTS=1` bounds it at depth one, and tests set it to `0` against
+  a stubbed runner to prove the gate really does fail when the suite fails.
 
 ## Flagged for human (not auto-fixed)
 
-- **Dimension 6 (skills)** — a repo skill must encode a workflow that really
-  exists. Author `.claude/skills/` once BotOS has a stack and a run loop.
-- **Dimension 5 (setup contract)** — `bootstrap.sh` installs nothing because
-  there is nothing to install. Extend it when a toolchain is chosen.
-- **Dimension 9 (full runnability)** — needs live verification; blocked on
-  application code existing at all.
-- **Dimension 4** — `make test` deliberately exits non-zero. Replace the stub
-  with a real runner and register it in `run_all` in `scripts/verify.sh`.
-- **Product definition** — `AGENTS.md` "What This Is" and the module-edge
-  section of `docs/DEPENDENCY-GRAPH.md` are marked unfilled on purpose. The
-  approved design was not available in the project attachments (the Brain note
-  is an empty template), and guessing the product from the repository name
-  would have written fiction into the contract. A human should fill these.
+Every item below is blocked on the same missing input: **an approved product
+design for BotOS.** None of them can be closed by an agent without inventing
+one.
+
+- **Product definition (dim 1)** — `AGENTS.md` "What This Is" and
+  "Architecture" are unfilled. This is the second change to leave them so. A
+  human should record what BotOS is, ideally as an AGDR.
+- **Application module edges (dim 3)** — the module-edge section of
+  `docs/DEPENDENCY-GRAPH.md` stays empty until modules exist.
+- **Setup contract (dim 5)** — `bootstrap.sh` installs nothing because no
+  toolchain has been chosen. Choosing one needs an AGDR, since the repository's
+  zero-dependency stance is a recorded decision.
+- **Full runnability (dim 9)** — needs a documented run command and live
+  verification. Blocked on application code.
+- **A run-the-app skill (dim 6)** — the two skills that could honestly be
+  written were. A third, covering the run loop, waits on dim 9.
 
 No suspected committed secrets were found.
 
@@ -94,7 +117,7 @@ No suspected committed secrets were found.
 
 - `docs/mc-readiness-report.md` — this report.
 - `docs/mc-readiness.json` — machine-readable scorecard, same date and level.
-- `README.md` — marker-bounded readiness badge inserted after the H1.
+- `README.md` — marker-bounded readiness badge refreshed in place.
 
 ## Deferred
 

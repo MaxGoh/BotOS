@@ -8,10 +8,16 @@ that Claude, Codex, and Gemini harnesses all resolve to one source of truth.
 
 BotOS is a greenfield project owned by Max Goh, licensed MIT.
 
-**The product definition is not yet recorded in this repository.** This commit
-establishes the *foundation* only — the instructions, decision log, verify
-loop, and CI that later product work is expected to land on top of. No
-application code exists yet, and none should be inferred from this scaffold.
+**The product definition is still not recorded in this repository.** The
+foundation is what exists — instructions, decision log, verify loop, test
+suite, skills, and CI — and it is what later product work is expected to land
+on top of. No application code exists yet, and none should be inferred from
+this scaffold.
+
+This section has now been left unfilled across two changes, both times because
+no approved design was available to the agent doing the work. That is the
+intended outcome: writing a plausible-sounding product definition here would
+put fiction into the file every other agent treats as authoritative.
 
 Before writing product code, record what BotOS is in an AGDR (see
 `docs/agdr/`) and replace this section. Do not guess the product shape from
@@ -19,9 +25,10 @@ the repository name.
 
 ## Architecture
 
-There is no application code yet, so there is no dependency graph to draw.
-`docs/DEPENDENCY-GRAPH.md` holds the directory map and is the file to update
-as soon as the first module lands.
+**Still unfilled, for the same reason as the section above.** There is no
+application code yet, so there is no module dependency graph to draw.
+`docs/DEPENDENCY-GRAPH.md` holds the directory map and the scaffold's own
+edges, and is the file to update as soon as the first module lands.
 
 ## Key Commands
 
@@ -34,19 +41,42 @@ make help       # list every target
 make bootstrap  # check the local toolchain; install nothing yet
 make verify     # the full gate — run this before you hand work back
 make check      # alias for verify
-make test       # no test suite yet; fails loudly rather than passing silently
+make test       # the test suite on its own (verify runs it too)
 ```
 
 `make verify` is the single gate. CI runs exactly that target, so a green
 `make verify` locally means a green CI run — keep it that way.
+
+## Tests
+
+`scripts/test.sh` runs every `tests/test_*.sh`, and `make verify` runs
+`scripts/test.sh`. There is one gate, not two.
+
+The suite tests the scaffold itself, because the scaffold is the only code
+here: it builds a scratch git repo from the current working tree, breaks
+exactly one thing in it, and asserts that `scripts/verify.sh` reports it.
+Every check in the gate has a case that fails when the check is removed from
+`run_all` — that property was mutation-tested, and it is the property to
+preserve when you add a check.
 
 ### Growing the verify loop
 
 When you add a language toolchain, extend `scripts/verify.sh` rather than
 adding a parallel command. Each check is a `check_*` shell function registered
 in `run_all`; add yours there so it runs locally and in CI from one definition.
-When a real test suite exists, replace the `test` target's failure stub with
-the actual runner and add it to `run_all`.
+Then add a case to `tests/test_verify.sh` and confirm it fails with your check
+commented out of `run_all` — a check nobody has seen fail is a check nobody
+knows works.
+
+The suite runs the gate, and the gate runs the suite. `scripts/test.sh`
+exports `BOTOS_SKIP_TESTS=1` so the nested gate runs inside fixtures skip
+`check_tests` instead of recursing. Leave that guard alone.
+
+The `.claude/skills/` directory carries the two workflows above in loadable
+form: `verifying-changes` (run the gate, read the failures) and
+`extending-the-verify-loop` (add a check, a test, or a toolchain). A skill
+needs `name` and `description` frontmatter and its `name` must match its
+directory, which `make verify` enforces.
 
 ## Conventions
 
@@ -76,6 +106,8 @@ the actual runner and add it to `run_all`.
   its output. Report failures with the output attached.
 - **Foundation-only scope:** this scaffold deliberately contains no product
   implementation. Do not add speculative application code to "complete" it.
+- **No vacuous tests.** A test that passes with the thing it tests removed is
+  worse than no test. Prove a new case fails before you keep it.
 
 ## Secrets & Env Config
 

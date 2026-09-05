@@ -18,11 +18,8 @@ verify: ## Run the full gate — do this before handing work back
 
 check: verify ## Alias for verify
 
-test: ## Run the test suite (none exists yet)
-	@printf 'No test suite exists yet.\n' >&2
-	@printf 'Add one with the first application code, then replace this target\n' >&2
-	@printf 'and register the runner in run_all() in scripts/verify.sh.\n' >&2
-	@exit 1
+test: ## Run the test suite (also run as part of verify)
+	@./scripts/test.sh
 
 clean: ## Remove local build artifacts (nothing to clean yet)
 	@printf 'Nothing to clean.\n'
