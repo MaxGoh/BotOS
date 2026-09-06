@@ -3,14 +3,14 @@
   "date": "2026-09-05",
   "last_evaluated": "2026-09-05",
   "level": "Not ready",
-  "summary": "Baseline was a repository containing only LICENSE: all nine dimensions absent. The foundation scaffold moved five dimensions to present and two to partial. The level remains Not ready because dimensions 6 (skills) and 9 (full runnability) cannot be satisfied until BotOS has a product definition and application code. The remaining gaps are bounded by the repository being greenfield, not by the quality of the scaffold.",
+  "summary": "Baseline was a repository containing only LICENSE: all nine dimensions absent. The foundation scaffold moved five dimensions to present and two to partial. The level remains Not ready because dimensions 6 (skills) and 9 (full runnability) cannot be satisfied until BotOS has application code. The remaining gaps are bounded by the repository being greenfield, not by the quality of the scaffold.",
   "dimensions": [
     {
       "id": 1,
       "name": "Agent instructions",
       "score": "present",
       "evidence": ["AGENTS.md", "CLAUDE.md"],
-      "notes": "AGENTS.md covers architecture, key commands, conventions and guardrails. CLAUDE.md is a pointer rather than a second copy, so the two cannot drift."
+      "notes": "AGENTS.md covers architecture, key commands, conventions and guardrails. CLAUDE.md is a relative symlink to AGENTS.md rather than a second copy, so the two cannot drift."
     },
     {
       "id": 2,
@@ -115,8 +115,8 @@
     },
     {
       "dimension": 1,
-      "item": "Product definition placeholders",
-      "reason": "AGENTS.md 'What This Is' and the module-edge section of docs/DEPENDENCY-GRAPH.md are marked unfilled on purpose. The approved design was not available in the project attachments (the Brain note is an empty template), and guessing the product from the repository name would have written fiction into the agent contract."
+      "item": "Product definition placeholders (corrected 2026-09-06)",
+      "reason": "Superseded. The approved design was not reachable from the box that produced this report, so AGENTS.md and docs/DEPENDENCY-GRAPH.md were left unfilled. The design was already approved and has since been transferred into docs/design/; both files now carry the real product definition. See docs/agdr/AGDR-2026-09-06-001-apply-approved-design.md. Scores in this file predate that change and have not been re-evaluated."
     }
   ],
   "published": [

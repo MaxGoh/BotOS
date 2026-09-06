@@ -37,12 +37,92 @@ check_required_files() {
 	for f in \
 		LICENSE README.md AGENTS.md CLAUDE.md CONTRIBUTING.md SECURITY.md \
 		Makefile .gitignore .env.example \
+		docs/BUILD.md docs/conventions.md \
 		docs/DEPENDENCY-GRAPH.md docs/agdr/README.md \
 		docs/agdr/AGDR-0000-template.md \
+		docs/design/product-design.md \
+		docs/design/approved/README.md \
+		docs/design/approved/manifest.json \
+		docs/design/approved/verification.json \
+		docs/design/approved/prototype.html \
+		docs/design/approved/conversation.png \
+		docs/design/approved/workstations.png \
 		scripts/bootstrap.sh scripts/verify.sh \
 		.github/workflows/ci.yml
 	do
 		[ -f "$f" ] || fail "missing required file: $f"
+	done
+}
+
+# One instruction source. CLAUDE.md must stay a *relative* symlink to
+# AGENTS.md — a regular copy is how the two silently diverge.
+check_claude_symlink() {
+	start "CLAUDE.md is a relative symlink to AGENTS.md"
+	if [ ! -L CLAUDE.md ]; then
+		fail "CLAUDE.md is not a symlink; it must link to AGENTS.md"
+		return
+	fi
+	target=$(readlink CLAUDE.md)
+	[ "$target" = "AGENTS.md" ] || \
+		fail "CLAUDE.md points at '$target'; expected the relative target AGENTS.md"
+	[ -f AGENTS.md ] || fail "CLAUDE.md symlink target AGENTS.md does not exist"
+}
+
+sha256_of() {
+	if command -v sha256sum >/dev/null 2>&1; then
+		sha256sum "$1" | cut -d' ' -f1
+	elif command -v shasum >/dev/null 2>&1; then
+		shasum -a 256 "$1" | cut -d' ' -f1
+	else
+		printf ''
+	fi
+}
+
+# The approved prototype is a provenance artifact. If its bytes change, the
+# manifest hash no longer describes what the operator approved.
+check_approved_design() {
+	start "approved design matches its manifest"
+	manifest=docs/design/approved/manifest.json
+	html=docs/design/approved/prototype.html
+	if [ ! -f "$manifest" ] || [ ! -f "$html" ]; then
+		fail "approved design artifacts are missing"
+		return
+	fi
+	expected=$(grep -o '"prototypeSha256"[[:space:]]*:[[:space:]]*"[0-9a-f]*"' "$manifest" \
+		| sed 's/.*"\([0-9a-f]*\)"$/\1/')
+	if [ -z "$expected" ]; then
+		fail "$manifest: no prototypeSha256 recorded"
+		return
+	fi
+	actual=$(sha256_of "$html")
+	if [ -z "$actual" ]; then
+		printf '  note  no sha256 tool available; hash check skipped\n'
+		return
+	fi
+	[ "$actual" = "$expected" ] || \
+		fail "$html: sha256 $actual does not match manifest $expected — approved snapshots are immutable; add a new version instead"
+
+	expected_bytes=$(grep -o '"prototypeBytes"[[:space:]]*:[[:space:]]*[0-9]*' "$manifest" \
+		| grep -o '[0-9]*$')
+	if [ -n "$expected_bytes" ]; then
+		actual_bytes=$(wc -c < "$html" | tr -d ' ')
+		[ "$actual_bytes" = "$expected_bytes" ] || \
+			fail "$html: $actual_bytes bytes, manifest records $expected_bytes"
+	fi
+}
+
+# Records are append-only and dated. A misnamed record does not sort into the
+# log and is easy to miss when reconstructing a decision.
+check_agdr_naming() {
+	start "decision records are named correctly"
+	for f in $(tracked_matching '^docs/agdr/.*\.md$'); do
+		base=${f##*/}
+		case "$base" in
+			README.md|AGDR-0000-template.md) continue ;;
+		esac
+		printf '%s' "$base" \
+			| grep -Eq '^AGDR-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{3}-[a-z0-9-]+\.md$' || \
+			fail "$f: expected AGDR-YYYY-MM-DD-NNN-short-title.md"
 	done
 }
 
@@ -136,7 +216,10 @@ check_trailing_whitespace() {
 
 run_all() {
 	check_required_files
+	check_claude_symlink
 	check_license
+	check_approved_design
+	check_agdr_naming
 	check_shell_syntax
 	check_secrets
 	check_env_example
