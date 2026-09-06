@@ -26,8 +26,9 @@ illustrative prototype, and this foundation. No application runtime,
 installer, database schema, host manager, or live workstation integration
 exists yet. Do not describe the prototype as production software or as a live
 workstation integration, and do not add speculative application code to
-"complete" the foundation. The phased implementation plan is a separate,
-already-requested deliverable.
+"complete" the foundation. The approved [technical architecture](docs/design/technical-design.md) and
+[implementation plan](docs/plans/implementation-roadmap.md) now guide feasibility
+work; candidate mechanisms are not yet proven.
 
 ## Architecture
 

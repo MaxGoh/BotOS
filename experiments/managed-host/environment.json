@@ -1,0 +1,25 @@
+{
+  "tested_at": "2026-09-06T06:12:44.251835+00:00",
+  "system": "Linux",
+  "machine": "x86_64",
+  "uid": 1000,
+  "tools": {
+    "docker": null,
+    "podman": null,
+    "limactl": null,
+    "kubectl": null,
+    "qemu-system-x86_64": null,
+    "weston": null,
+    "wayvnc": null,
+    "Xvfb": "/usr/bin/Xvfb"
+  },
+  "kvm_device_present": false,
+  "cgroup_root_writable": false,
+  "verdict": "blocked",
+  "scope": "Current agent box only; no macOS or external Linux host tested",
+  "user_namespace_probe": {
+    "command": "unshare --user --map-root-user true",
+    "observed": "write failed /proc/self/uid_map: Operation not permitted"
+  },
+  "cgroup_mount": "cgroup2 ro"
+}

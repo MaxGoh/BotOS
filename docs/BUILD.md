@@ -13,9 +13,20 @@ approved design relevant to the work.
   `design/`.
 - No application runtime, installer, database schema, host manager, or live
   workstation integration has been implemented.
-- A phased implementation plan has been requested and remains the next
-  deliverable. The application stack and repository file map are not decided
-  yet.
+- The [technical architecture](design/technical-design.md) and
+  [phased implementation plan](plans/implementation-roadmap.md) are approved.
+  The Go core, PostgreSQL and React/TypeScript/Vite stack is selected;
+  infrastructure and integration candidates still require feasibility evidence.
+  Execute the [feasibility plan](plans/feasibility.md) before dependent runtime work.
+
+## Full-release implementation
+
+Use the [OpenSpec proposal](../openspec/changes/implement-full-release/proposal.md),
+[design](../openspec/changes/implement-full-release/design.md) and
+[task checklist](../openspec/changes/implement-full-release/tasks.md). Start group A
+(core/persistent dashboard) while group B validates provider and workstation
+mechanisms. Feasibility gates block their dependent integrations, not unrelated
+core development. All application tasks remain unchecked.
 
 ## Orientation
 
@@ -93,3 +104,22 @@ they cover the design prototype, not a BotOS runtime.
 Follow the active operator and harness instructions. Preserve the working tree
 for harness publication where applicable. The repository uses the existing MIT
 license in `../LICENSE`.
+
+## Contributor feasibility checks
+
+Run `make bootstrap` and `make verify` from a clone with Git, POSIX shell and
+make. CI runs the same gate on Ubuntu 24.04 and macOS 14. No model account,
+provider secret, container runtime or access to the maintainer’s machine is
+required for these checks. The macOS CI job is configured, not yet observed
+in this session.
+
+`make feasibility` runs an actual same-UID reader against a temporary controlled
+marker with an empty environment. Successful execution demonstrates why that
+approach is insufficient isolation; it does not certify private takeover. The
+same probe runs in the regular test suite. Temporary data is removed on exit.
+
+`make feasibility-host` inventories Lima, kubectl and host virtualization
+prerequisites without installing or starting anything. It deliberately returns
+status 2 because inventory alone cannot pass G1/G2/G3. Missing prerequisites
+are printed individually. See [the contributor guide](validation/CONTRIBUTING.md)
+for the separate integration evidence requirements.

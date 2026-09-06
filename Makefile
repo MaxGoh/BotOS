@@ -23,3 +23,10 @@ test: ## Run the test suite (also run as part of verify)
 
 clean: ## Remove local build artifacts (nothing to clean yet)
 	@printf 'Nothing to clean.\n'
+
+.PHONY: feasibility feasibility-host
+feasibility: ## Run the credential-free isolation negative control
+	@./scripts/feasibility.sh local
+
+feasibility-host: ## Inventory host prerequisites (exit 2: integration gates unvalidated)
+	@./scripts/feasibility.sh host
