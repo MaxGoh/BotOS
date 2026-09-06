@@ -1,0 +1,18 @@
+{
+  "gate": "G1",
+  "probe": "local-generated-schema",
+  "tested_at": "2026-09-06T06:12:44.251706+00:00",
+  "version": "codex-cli 0.153.4",
+  "command": "codex app-server generate-json-schema --experimental --out <temporary-directory>",
+  "observed": {
+    "required_fields": [
+      "accessToken",
+      "chatgptAccountId",
+      "type"
+    ],
+    "interface_description": "[UNSTABLE] FOR OPENAI INTERNAL USE ONLY - DO NOT USE. The access token must contain the same scopes that Codex-managed ChatGPT auth tokens have."
+  },
+  "verdict": "fail",
+  "scope": "This external-token candidate only; other routes and end-to-end authentication not tested",
+  "credentials_used": false
+}

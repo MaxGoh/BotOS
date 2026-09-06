@@ -15,11 +15,12 @@ they are implemented.
 | Path | Purpose |
 |------|---------|
 | `docs/` | Project documentation |
+| `openspec/` | Full-release proposal, design, capability deltas and executable checklist |
 | `docs/BUILD.md` | Current state, orientation, available checks |
 | `docs/conventions.md` | Repository and development conventions |
 | `docs/design/` | Approved product design, prototype, screenshots, provenance |
 | `docs/agdr/` | Agent Decision Records (append-only; see `docs/agdr/README.md`) |
-| `scripts/` | `bootstrap.sh` (toolchain check), `verify.sh` (the gate), `test.sh` (suite runner) |
+| `scripts/` | `bootstrap.sh` (toolchain check), `verify.sh` (the gate), `test.sh` (suite runner), `feasibility.sh` (credential-free probes) |
 | `tests/` | `lib.sh` (assertions + fixtures) and one `test_*.sh` per area under test |
 | `.claude/skills/` | Repo skills: `verifying-changes`, `extending-the-verify-loop` |
 | `.github/` | CI workflow, PR template, issue templates |
@@ -34,6 +35,7 @@ flowchart TD
     Repo[BotOS repository foundation] --> Instructions[AGENTS.md]
     Claude[CLAUDE.md symlink] --> Instructions
     Repo --> Decisions[docs/agdr]
+    Repo --> ReleaseSpec[openspec full-release change]
     Repo --> Design[Approved product design and prototype]
     Repo --> Skills[.claude/skills]
     Repo --> Gate[Makefile]
@@ -44,7 +46,9 @@ flowchart TD
     Suite --> Cases[tests/test_*.sh]
     Cases --> Lib[tests/lib.sh]
     Cases -->|run against a scratch fixture| Verify
-    CI[.github/workflows/ci.yml] --> Gate
+    Gate --> Probes[scripts/feasibility.sh]
+    Cases --> Probes
+    CI[Linux and macOS CI] --> Gate
 ```
 
 CI deliberately shells out to the same `make verify` a developer runs, so the
@@ -63,6 +67,8 @@ turns the gate into an infinite loop.
 | Agent instruction alias | Implemented symlink | Root `AGENTS.md` |
 | Verify gate | Implemented | `make`, POSIX `sh`, `git`; optional `shellcheck` |
 | Test suite | Implemented | `make`, POSIX `sh`, `git`; runs the gate against scratch fixtures |
+| Feasibility probes | Implemented contributor checks | POSIX shell and standard utilities; host inventory detects Lima/kubectl without requiring them |
+| OpenSpec change | Specification only | OpenSpec 1.12.0 authoring validator; not a production runtime dependency |
 | Repo skills | Implemented docs | Harness skill loader; no runtime dependency |
 | Approved prototype | Documentation artifact | Browser; optional external font loading |
 | Application services and packages | Not implemented | None declared |

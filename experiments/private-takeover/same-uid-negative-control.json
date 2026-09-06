@@ -1,0 +1,11 @@
+{
+  "tested_at": "2026-09-06T06:16:58.844048+00:00",
+  "probe": "same-uid-directory-isolation-negative-control",
+  "setup": "Parent creates 0700 temporary directory and 0600 file containing a non-secret marker; child runs same UID with empty environment",
+  "child_code": "from pathlib import Path; import sys; print(Path(sys.argv[1]).read_text())",
+  "child_environment": {},
+  "observed": "Child reads controlled marker successfully",
+  "conclusion": "Same-UID file modes and environment scrubbing do not isolate an agent from these files",
+  "scope": "Negative control only, not a test of the approved isolated runtime",
+  "exit_code": 0
+}

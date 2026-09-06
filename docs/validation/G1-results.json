@@ -1,0 +1,93 @@
+{
+  "gate": "G1",
+  "verdict": "blocked",
+  "tested_at": "2026-09-06T06:15:32.684474+00:00",
+  "host": "current Linux x86_64 agent box only",
+  "versions": {
+    "codex": "0.153.4",
+    "claude": "2.1.260"
+  },
+  "cases": [
+    {
+      "id": "P1",
+      "requirement": "Execute P1 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No accepted subscription credential-free route or isolated authenticated engine fixture established.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "P2",
+      "requirement": "Execute P2 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No accepted subscription credential-free route or isolated authenticated engine fixture established.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "P3",
+      "requirement": "Execute P3 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No accepted subscription credential-free route or isolated authenticated engine fixture established.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "P4",
+      "requirement": "Execute P4 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No accepted subscription credential-free route or isolated authenticated engine fixture established.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "P5",
+      "requirement": "Execute P5 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No accepted subscription credential-free route or isolated authenticated engine fixture established.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "P6",
+      "requirement": "Execute P6 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No accepted subscription credential-free route or isolated authenticated engine fixture established.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    }
+  ],
+  "limitations": [
+    "No accepted subscription credential-free route or isolated authenticated engine fixture established.",
+    "No actual provider inference or private takeover performed"
+  ],
+  "artifact_paths": [
+    "../../experiments/managed-host/environment.json"
+  ],
+  "candidate_observations": [
+    {
+      "candidate": "Codex 0.153.4 chatgptAuthTokens",
+      "verdict": "fail",
+      "reason": "Schema requires provider accessToken inside engine and marks interface internal-use-only",
+      "evidence_path": "../../experiments/provider-boundary/codex-schema-observation.json"
+    }
+  ],
+  "mode_verdicts": {
+    "claude-subscription": "blocked",
+    "codex-subscription": "blocked",
+    "openai-byok": "blocked",
+    "anthropic-byok": "blocked"
+  }
+}

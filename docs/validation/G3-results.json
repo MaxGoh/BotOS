@@ -1,0 +1,76 @@
+{
+  "gate": "G3",
+  "verdict": "blocked",
+  "tested_at": "2026-09-06T06:15:32.684474+00:00",
+  "host": "current Linux x86_64 agent box only",
+  "versions": {},
+  "cases": [
+    {
+      "id": "H1-provision",
+      "requirement": "Execute H1-provision from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No supported test host connected; managed VM runtime and virtualization device unavailable in this box.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "H2-restart",
+      "requirement": "Execute H2-restart from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No supported test host connected; managed VM runtime and virtualization device unavailable in this box.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "H3-resources",
+      "requirement": "Execute H3-resources from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No supported test host connected; managed VM runtime and virtualization device unavailable in this box.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "H4-mounts-network",
+      "requirement": "Execute H4-mounts-network from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No supported test host connected; managed VM runtime and virtualization device unavailable in this box.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "H5-repair",
+      "requirement": "Execute H5-repair from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No supported test host connected; managed VM runtime and virtualization device unavailable in this box.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "H6-macos",
+      "requirement": "Execute H6-macos from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "No supported test host connected; managed VM runtime and virtualization device unavailable in this box.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    }
+  ],
+  "limitations": [
+    "No supported test host connected; managed VM runtime and virtualization device unavailable in this box.",
+    "No actual provider inference or private takeover performed"
+  ],
+  "artifact_paths": [
+    "../../experiments/managed-host/environment.json"
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "gate": "G2",
+  "verdict": "blocked",
+  "tested_at": "2026-09-06T06:15:32.684474+00:00",
+  "host": "current Linux x86_64 agent box only",
+  "versions": {},
+  "cases": [
+    {
+      "id": "D1",
+      "requirement": "Execute D1 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "D2",
+      "requirement": "Execute D2 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "D3",
+      "requirement": "Execute D3 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "D4",
+      "requirement": "Execute D4 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "D5",
+      "requirement": "Execute D5 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "D6",
+      "requirement": "Execute D6 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    },
+    {
+      "id": "D7",
+      "requirement": "Execute D7 from the approved feasibility plan",
+      "setup": "Requires isolated runtime on a suitable test host",
+      "command_or_steps": "Not executed; preflight blocked",
+      "expected": "Behavior satisfies the approved gate contract",
+      "observed": "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+      "verdict": "blocked",
+      "evidence_path": "../../experiments/managed-host/environment.json"
+    }
+  ],
+  "limitations": [
+    "Assembled isolated desktop unavailable; namespace creation denied and cgroup mount read-only.",
+    "No actual provider inference or private takeover performed"
+  ],
+  "artifact_paths": [
+    "../../experiments/managed-host/environment.json"
+  ],
+  "negative_controls": [
+    {
+      "verdict": "fail",
+      "scope": "Rejected same-UID filesystem fallback only",
+      "evidence_path": "../../experiments/private-takeover/same-uid-negative-control.json"
+    }
+  ]
+}

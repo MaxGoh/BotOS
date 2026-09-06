@@ -29,3 +29,11 @@ Preserve approved design artifacts and their provenance. Prototype screen playba
 ## Publishing
 
 Follow the operator's active publishing contract. Do not commit, push, or create a PR yourself when the session harness owns those actions. Include the relevant verification and decision record in the prepared change.
+
+## Feasibility contributions
+
+Portable checks belong in `scripts/feasibility.sh`, with behavior tests under
+`tests/`; the existing suite runs them through `make verify`. Keep real provider
+and hardware experiments explicit and separate. Do not put repository secrets
+on pull-request jobs or treat prerequisite inventory as integration success.
+See [the contributor guide](validation/CONTRIBUTING.md).
