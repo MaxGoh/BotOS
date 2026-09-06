@@ -7,7 +7,8 @@ approved design relevant to the work.
 
 - The repository foundation is **applied**: canonical `../AGENTS.md`, a
   relative `CLAUDE.md` symlink to it, repository conventions, append-only
-  decision records, the `make verify` gate, and CI.
+  decision records, the `make verify` gate, the shell test suite behind it,
+  the repo skills under `../.claude/skills/`, and CI.
 - The product design and visual prototype are approved and recorded here, in
   `design/`.
 - No application runtime, installer, database schema, host manager, or live
@@ -34,18 +35,24 @@ grocery ordering or a single business domain.
 ```bash
 make bootstrap   # check the local toolchain; installs nothing
 make verify      # the gate — CI runs exactly this target
+make test        # the test suite on its own, while iterating
 ```
 
-`make verify` runs `../scripts/verify.sh`, which checks the documentation
-foundation only: required files, the `CLAUDE.md` symlink target, license
-integrity, the approved prototype's SHA-256 against
+`make verify` runs `../scripts/verify.sh`, which checks the foundation itself:
+required files, the `CLAUDE.md` symlink target, license integrity, the
+approved prototype's SHA-256 against
 [`design/approved/manifest.json`](design/approved/manifest.json), decision
 record naming, shell syntax, committed secrets, `.env.example` placeholders,
-relative Markdown links, and trailing whitespace.
+relative Markdown links, trailing whitespace, skill frontmatter, and last the
+test suite.
 
-There is **no application build or test command** at this stage; `make test`
-exits non-zero rather than reporting a hollow success. Do not run Mission
-Control commands here or claim they validate BotOS.
+The suite is `../scripts/test.sh`, which the gate calls, so `make verify` stays
+the single command. It tests the foundation, because the foundation is the only
+code here: each case builds a scratch git repo from the working tree, breaks
+exactly one thing, and asserts the gate reports it.
+
+There is still **no application build or run command** at this stage. Do not
+run Mission Control commands here or claim they validate BotOS.
 
 The approved prototype is a self-contained HTML design artifact and can be
 opened directly in a browser. It is immutable under the gate: changing its
@@ -60,7 +67,16 @@ alongside runtime work.
 
 ### Verification recorded for the foundation
 
-Run on 2026-09-06 when the foundation and approved design were applied:
+Run on 2026-09-06, after the test suite and skills were merged with the
+approved design: `make verify` passed **12 checks, 0 failures**, which includes
+`make test` at **3 test files, 46 cases, 0 failures**. The run was repeated
+with `shellcheck` v0.10.0 on `PATH`, the way CI runs on `ubuntu-latest`, and
+was green there too, with the lint case exercised rather than noted. Each of
+the twelve checks was mutation-tested — removed from `run_all()` in a scratch
+copy in turn — and the suite failed every time.
+
+Recorded earlier on 2026-09-06, when the foundation and approved design were
+applied:
 `make verify` passed 10 checks with 0 failures, the prototype hash matched its
 manifest, its inline JavaScript passed `node --check`, and `LICENSE` was
 confirmed unmodified. Each new check was negative-tested. Full evidence is in

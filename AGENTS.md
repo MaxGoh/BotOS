@@ -63,24 +63,46 @@ make help       # list every target
 make bootstrap  # check the local toolchain; install nothing yet
 make verify     # the full gate — run this before you hand work back
 make check      # alias for verify
-make test       # no test suite yet; fails loudly rather than passing silently
+make test       # the test suite on its own (verify runs it too)
 ```
 
 `make verify` is the single gate. CI runs exactly that target, so a green
 `make verify` locally means a green CI run — keep it that way. These checks
-cover the documentation foundation only; there is no application build or test
-command yet. Do not run Mission Control commands here or claim they validate
-BotOS.
+cover the foundation itself — the docs, the scripts, and the gate; there is no
+application build or application test command yet. Do not run Mission Control
+commands here or claim they validate BotOS.
+
+## Tests
+
+`scripts/test.sh` runs every `tests/test_*.sh`, and `make verify` runs
+`scripts/test.sh`. There is one gate, not two.
+
+The suite tests the scaffold itself, because the scaffold is the only code
+here: it builds a scratch git repo from the current working tree, breaks
+exactly one thing in it, and asserts that `scripts/verify.sh` reports it.
+Every check in the gate has a case that fails when the check is removed from
+`run_all` — that property was mutation-tested, and it is the property to
+preserve when you add a check.
 
 ### Growing the verify loop
 
 When you add a language toolchain, extend `scripts/verify.sh` rather than
 adding a parallel command. Each check is a `check_*` shell function registered
 in `run_all`; add yours there so it runs locally and in CI from one definition.
-When a real test suite exists, replace the `test` target's failure stub with
-the actual runner and add it to `run_all`. Add real checks alongside the first
-implementation; never create placeholder build or test targets that report
-success without doing work.
+Then add a case to `tests/test_verify.sh` and confirm it fails with your check
+commented out of `run_all` — a check nobody has seen fail is a check nobody
+knows works. Add real checks alongside the first implementation; never create
+placeholder build or test targets that report success without doing work.
+
+The suite runs the gate, and the gate runs the suite. `scripts/test.sh`
+exports `BOTOS_SKIP_TESTS=1` so the nested gate runs inside fixtures skip
+`check_tests` instead of recursing. Leave that guard alone.
+
+The `.claude/skills/` directory carries the two workflows above in loadable
+form: `verifying-changes` (run the gate, read the failures) and
+`extending-the-verify-loop` (add a check, a test, or a toolchain). A skill
+needs `name` and `description` frontmatter and its `name` must match its
+directory, which `make verify` enforces.
 
 ## Decision records
 
@@ -132,7 +154,9 @@ prerequisites, and expected results.
 - **Do not claim work is verified without running `make verify`** and reading
   its output. Report failures with the output attached.
 - **Foundation-only scope:** this repository deliberately contains no product
-  implementation.
+  implementation. Do not add speculative application code to "complete" it.
+- **No vacuous tests.** A test that passes with the thing it tests removed is
+  worse than no test. Prove a new case fails before you keep it.
 
 ## Security and access
 
@@ -187,7 +211,12 @@ consumed by code yet; the file exists so the first one has an obvious home.
   product requirements
 - [`docs/design/approved/`](docs/design/approved/README.md): approved
   prototype, screenshots, and verification evidence
-- `scripts/`: `bootstrap.sh` (toolchain check) and `verify.sh` (the gate)
+- `scripts/`: `bootstrap.sh` (toolchain check), `verify.sh` (the gate), and
+  `test.sh` (the suite runner the gate calls)
+- `tests/`: the shell test suite that exercises the gate against scratch
+  fixtures
+- `.claude/skills/`: loadable agent workflows for running and extending the
+  gate
 - `.github/`: CI workflow, PR template, issue templates
 
 Add application directories after the implementation architecture is decided.

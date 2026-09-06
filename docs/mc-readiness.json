@@ -3,120 +3,114 @@
   "date": "2026-09-05",
   "last_evaluated": "2026-09-05",
   "level": "Not ready",
-  "summary": "Baseline was a repository containing only LICENSE: all nine dimensions absent. The foundation scaffold moved five dimensions to present and two to partial. The level remains Not ready because dimensions 6 (skills) and 9 (full runnability) cannot be satisfied until BotOS has application code. The remaining gaps are bounded by the repository being greenfield, not by the quality of the scaffold.",
+  "summary": "Second evaluation, scored 2026-09-05. Dimension 4 rose from partial to present (a real 39-case POSIX-shell test suite, registered in run_all() so make verify stays the single gate) and dimension 6 from absent to present (two repo skills encoding the gate workflows, with their frontmatter mechanically validated). Tally moved from 5/2/2 to 7 present, 1 partial, 1 absent. The level is still Not ready because dimension 9 is absent: there is no application to run. Reconciled 2026-09-06 against the approved product design, which reached the repository on main after this evaluation was scored and closed the dimension 1 gap it had flagged. Dimensions 5 and 9 remain blocked on a chosen toolchain and on application code, not on the design. Scores were not re-derived by a fresh evaluation run.",
+  "reconciled": "2026-09-06",
   "dimensions": [
     {
       "id": 1,
       "name": "Agent instructions",
       "score": "present",
       "evidence": ["AGENTS.md", "CLAUDE.md"],
-      "notes": "AGENTS.md covers architecture, key commands, conventions and guardrails. CLAUDE.md is a relative symlink to AGENTS.md rather than a second copy, so the two cannot drift."
+      "notes": "AGENTS.md covers the product definition, architecture, key commands, the test loop, conventions and guardrails. CLAUDE.md is a relative symlink to AGENTS.md rather than a second copy, so the two cannot drift. The Product and Architecture sections were unfilled when this dimension was scored; the approved design has since landed and both now carry the real definition."
     },
     {
       "id": 2,
       "name": "Decision records",
       "score": "present",
-      "evidence": ["docs/agdr/README.md", "docs/agdr/AGDR-0000-template.md", "docs/agdr/AGDR-2026-09-05-001-agent-ready-foundation.md"],
-      "notes": "Template, a written when/how guide, and a first real record for this change. Records are append-only; reversals supersede rather than delete."
+      "evidence": ["docs/agdr/README.md", "docs/agdr/AGDR-0000-template.md", "docs/agdr/AGDR-2026-09-05-001-agent-ready-foundation.md", "docs/agdr/AGDR-2026-09-05-003-test-the-scaffold.md", "docs/agdr/AGDR-2026-09-06-001-apply-approved-design.md"],
+      "notes": "One record per substantive change so far. Append-only; reversals supersede rather than delete."
     },
     {
       "id": 3,
       "name": "Codebase orientation",
       "score": "present",
       "evidence": ["docs/DEPENDENCY-GRAPH.md"],
-      "notes": "Directory map is complete for what exists. The module-edge section is deliberately empty because there is no application code, and carries an explicit TODO for the first module."
+      "notes": "Directory map covers every path that exists, and the foundation's own edges are drawn, including the verify-runs-tests / tests-run-verify cycle and the BOTOS_SKIP_TESTS guard that bounds it at depth one. The application-module section is empty because there are no application modules, not because the design is missing."
     },
     {
       "id": 4,
       "name": "Build / test / verify loop",
-      "score": "partial",
-      "evidence": ["Makefile", "scripts/verify.sh", ".github/workflows/ci.yml"],
-      "notes": "make verify is real, enforced in CI, and negative-tested against eleven induced failures. No build step and no test suite exist; make test fails loudly rather than passing vacuously. Upgrades to present when a real runner lands and is registered in run_all()."
+      "score": "present",
+      "evidence": ["Makefile", "scripts/verify.sh", "scripts/test.sh", "tests/lib.sh", "tests/test_verify.sh", "tests/test_bootstrap.sh", "tests/test_make.sh", ".github/workflows/ci.yml"],
+      "notes": "Was partial. make verify runs twelve checks including the suite; the suite runs 46 cases over three files. check_tests is registered in run_all(), so local and CI run one definition. Every check was mutation-tested: with the check removed from run_all(), the suite fails. The gate now runs shellcheck with -x so it can follow sourced libraries; without it the new files failed lint on CI (which ships shellcheck) while passing on a box without it, and that lint path now has a test of its own. No build step, because nothing is compiled."
     },
     {
       "id": 5,
       "name": "Setup / bootstrap contract",
       "score": "partial",
-      "evidence": ["scripts/bootstrap.sh", "Makefile"],
-      "notes": "make bootstrap checks required tools and exits non-zero when one is missing, but installs nothing because the repository has no dependencies. Becomes a real contract once a stack is chosen."
+      "evidence": ["scripts/bootstrap.sh", "Makefile", "tests/test_bootstrap.sh"],
+      "notes": "make bootstrap checks the toolchain, names what is missing and exits non-zero, and that behaviour is now pinned by tests rather than asserted. It still installs nothing because no toolchain has been chosen; choosing one needs an AGDR, since the zero-dependency stance is a recorded decision."
     },
     {
       "id": 6,
       "name": "Skills",
-      "score": "absent",
-      "evidence": [],
-      "notes": "No .claude/skills/ or .claude/commands/. Skills encode workflows that really exist; authoring them for an undefined product would be invention. Flagged for a human."
+      "score": "present",
+      "evidence": [".claude/skills/verifying-changes/SKILL.md", ".claude/skills/extending-the-verify-loop/SKILL.md", "scripts/verify.sh"],
+      "notes": "Was absent. Both skills encode workflows that exist today and were exercised in writing them: running the gate and reading its failures, and adding a check, a test or a toolchain without splitting the gate in two. check_skills fails the build on a missing SKILL.md, missing name/description frontmatter, or a name that does not match its directory. A third skill covering the run loop was deliberately not written; it waits on dimension 9."
     },
     {
       "id": 7,
       "name": "Guardrails & safety",
       "score": "present",
-      "evidence": ["AGENTS.md", "CONTRIBUTING.md", "SECURITY.md", "scripts/verify.sh"],
-      "notes": "Guardrails name what needs human approval, what must never be committed, and the MIT-license guardrail. The license guardrail is mechanically enforced: verify.sh fails if LICENSE is relicensed or its attribution altered."
+      "evidence": ["AGENTS.md", "CONTRIBUTING.md", "SECURITY.md", "scripts/verify.sh", "tests/test_verify.sh"],
+      "notes": "Guardrails name what needs human approval and what must never be committed. The MIT-license guardrail and the credential patterns are mechanically enforced, and both enforcement paths are covered by tests that fail when the check is removed. A 'no vacuous tests' guardrail was added."
     },
     {
       "id": 8,
       "name": "Secrets & env config",
       "score": "present",
-      "evidence": [".env.example", ".gitignore", "scripts/verify.sh", "SECURITY.md"],
-      "notes": "Names-and-placeholders contract is documented and enforced: the gate fails on a populated value in .env.example or a credential-shaped string in any tracked file. No env vars are referenced in code because there is no code."
+      "evidence": [".env.example", ".gitignore", "scripts/verify.sh", "tests/test_verify.sh", "SECURITY.md"],
+      "notes": "Names-and-placeholders contract is documented and enforced: the gate fails on a populated value in .env.example or a credential-shaped string in any tracked file. Four credential shapes and the accepted placeholder forms are both tested. The fixtures are assembled at runtime rather than written literally, so the suite does not need a scanner exemption."
     },
     {
       "id": 9,
       "name": "Full runnability (preconditions)",
       "score": "absent",
       "evidence": [],
-      "notes": "No application exists, so no full-app run command can exist and preconditions are not met. Needs live verification once product code lands. Not a scaffold defect."
+      "notes": "No application exists, so no full-app run command can exist and no live run can be confirmed. Preconditions are not met. Needs live verification once product code lands. Not a foundation defect — the design is approved and recorded, but nothing has been implemented from it yet."
     }
   ],
   "remediated": [
+    "scripts/test.sh",
+    "tests/lib.sh",
+    "tests/test_verify.sh",
+    "tests/test_bootstrap.sh",
+    "tests/test_make.sh",
+    ".claude/skills/verifying-changes/SKILL.md",
+    ".claude/skills/extending-the-verify-loop/SKILL.md",
+    "scripts/verify.sh",
+    "Makefile",
     "AGENTS.md",
-    "CLAUDE.md",
     "README.md",
     "CONTRIBUTING.md",
-    "SECURITY.md",
-    "Makefile",
-    "scripts/verify.sh",
-    "scripts/bootstrap.sh",
-    "docs/agdr/README.md",
-    "docs/agdr/AGDR-0000-template.md",
-    "docs/agdr/AGDR-2026-09-05-001-agent-ready-foundation.md",
     "docs/DEPENDENCY-GRAPH.md",
-    ".github/workflows/ci.yml",
-    ".github/PULL_REQUEST_TEMPLATE.md",
-    ".github/ISSUE_TEMPLATE/bug_report.md",
-    ".github/ISSUE_TEMPLATE/feature_request.md",
-    ".github/ISSUE_TEMPLATE/config.yml",
-    ".env.example",
-    ".gitignore",
-    ".editorconfig",
-    ".gitattributes"
+    "docs/agdr/AGDR-2026-09-05-003-test-the-scaffold.md"
   ],
   "flagged": [
     {
-      "dimension": 6,
-      "item": "Repo skills",
-      "reason": "A skill must encode a workflow that really exists. Author .claude/skills/ once BotOS has a stack and a run loop."
+      "dimension": 1,
+      "item": "Product definition (resolved 2026-09-06)",
+      "reason": "Resolved. When this dimension was scored, AGENTS.md Product and Architecture were unfilled because no approved design had reached the box. The design was already approved and has since been transferred into docs/design/ on main; AGENTS.md and docs/DEPENDENCY-GRAPH.md now carry the real product definition. See docs/agdr/AGDR-2026-09-06-001-apply-approved-design.md."
+    },
+    {
+      "dimension": 3,
+      "item": "Application module edges",
+      "reason": "The module-edge section of docs/DEPENDENCY-GRAPH.md stays empty until the first modules land. The foundation's own edges are drawn."
     },
     {
       "dimension": 5,
       "item": "Real bootstrap contract",
-      "reason": "bootstrap.sh installs nothing because there is nothing to install. Extend it when a toolchain is chosen."
+      "reason": "bootstrap.sh installs nothing because no toolchain has been chosen. Extending it requires choosing a stack, which needs an AGDR; the approved design records requirements, not an implementation stack."
+    },
+    {
+      "dimension": 6,
+      "item": "Run-the-app skill",
+      "reason": "The two skills that could honestly be written were written. A skill covering the run loop cannot be authored before there is something to run."
     },
     {
       "dimension": 9,
       "item": "Full runnability",
-      "reason": "Needs live verification; blocked on application code existing at all."
-    },
-    {
-      "dimension": 4,
-      "item": "Test suite",
-      "reason": "make test deliberately exits non-zero. Replace the stub with a real runner and register it in run_all() in scripts/verify.sh."
-    },
-    {
-      "dimension": 1,
-      "item": "Product definition placeholders (corrected 2026-09-06)",
-      "reason": "Superseded. The approved design was not reachable from the box that produced this report, so AGENTS.md and docs/DEPENDENCY-GRAPH.md were left unfilled. The design was already approved and has since been transferred into docs/design/; both files now carry the real product definition. See docs/agdr/AGDR-2026-09-06-001-apply-approved-design.md. Scores in this file predate that change and have not been re-evaluated."
+      "reason": "Needs a documented full-app run command and live verification. Blocked on application code existing at all."
     }
   ],
   "published": [
@@ -125,10 +119,10 @@
     "README.md"
   ],
   "tally": {
-    "present": 5,
-    "partial": 2,
-    "absent": 2,
-    "remediated": 21,
+    "present": 7,
+    "partial": 1,
+    "absent": 1,
+    "remediated": 14,
     "published": 3,
     "flagged": 5
   }

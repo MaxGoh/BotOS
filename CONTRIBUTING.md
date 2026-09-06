@@ -9,7 +9,8 @@ Start a session with [`docs/BUILD.md`](docs/BUILD.md).
 
 ```bash
 make bootstrap   # checks your toolchain; installs nothing (there is nothing to install yet)
-make verify      # the gate
+make verify      # the gate: static checks, then the test suite
+make test        # the suite on its own, while iterating
 ```
 
 ## Making a change
@@ -28,6 +29,8 @@ make verify      # the gate
 - A change to `LICENSE` without the owner's explicit approval.
 - Demo, mock, or stub data on a production path.
 - A new runtime dependency without an AGDR justifying it.
+- New behaviour with no test, or a test that still passes when the behaviour
+  is removed.
 - "It works" with no evidence that the gate was run.
 
 ## Style

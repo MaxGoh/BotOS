@@ -17,8 +17,10 @@ status.
 ## Project status
 
 > **Status: foundation.** The product design and visual prototype are
-> approved and recorded here. This repository has no application runtime or
-> installer yet. Implementation planning is the next deliverable.
+> approved and recorded here, alongside the agent-ready foundation —
+> instructions, decision log, verify loop, test suite, skills, and CI. This
+> repository has no application runtime or installer yet. Implementation
+> planning is the next deliverable.
 
 - [Start here](docs/BUILD.md)
 - [Approved product design](docs/design/product-design.md)
@@ -37,13 +39,15 @@ desktops, accounts, or payment services.
 
 ```bash
 make bootstrap   # check your local toolchain
-make verify      # run the full gate
+make verify      # run the full gate: static checks, then the test suite
+make test        # the test suite on its own, while iterating
 ```
 
 `make verify` is the only gate you need to satisfy. CI runs the same target,
 so green locally means green in CI. Run `make help` for the full list. The
-gate checks the documentation foundation; there is no application build or
-test command yet, and none is faked.
+gate checks the foundation itself — the docs, the scripts, and the gate's own
+behaviour; there is no application build or application test command yet, and
+none is faked.
 
 ## Repository layout
 
@@ -56,16 +60,19 @@ test command yet, and none is faked.
 | `docs/design/` | Approved product design, prototype, and provenance |
 | `docs/agdr/` | Agent Decision Records — why things are the way they are |
 | `docs/DEPENDENCY-GRAPH.md` | Directory map and dependency edges |
-| `scripts/` | `bootstrap.sh` and `verify.sh`, both pure POSIX shell |
+| `scripts/` | `bootstrap.sh`, `verify.sh`, `test.sh` — all pure POSIX shell |
+| `tests/` | The test suite: `lib.sh` plus one `test_*.sh` per area |
+| `.claude/skills/` | Repo skills for the run/verify workflows |
 | `.github/workflows/ci.yml` | CI, which runs `make verify` |
 
 ## Dependencies
 
 None. The foundation is `make` plus POSIX shell, both of which ship with the
-standard developer toolchain. No package manager is required to run `make
-verify` today, and no runtime dependency has been introduced. The application
-stack and build commands will be documented when the first implementation
-phase establishes them.
+standard developer toolchain — the test suite is written in the same two
+things. No package manager is required to run `make verify` today, and no
+runtime dependency has been introduced. The application stack and build
+commands will be documented when the first implementation phase establishes
+them.
 
 ## Contributing
 
