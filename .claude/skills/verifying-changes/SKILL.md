@@ -23,7 +23,7 @@ Expect a run to end with:
 
 ```
 ----------------------------------------
-PASS  9 checks, 0 failures
+PASS  12 checks, 0 failures
 ```
 
 A failing run prints `FAIL  <what went wrong>` under the check that caught it
@@ -35,6 +35,9 @@ and exits non-zero. Every message names the file.
 |---------|------------|
 | `missing required file: X` | Restore `X`. The foundation files are load-bearing; if one is genuinely obsolete, remove it from `check_required_files` in the same change and say why. |
 | `LICENSE is no longer the MIT License` / `copyright line was altered` | Revert it. Relicensing needs the owner's explicit approval — see the guardrails in `AGENTS.md`. |
+| `CLAUDE.md is not a symlink` / `expected the relative target AGENTS.md` | Restore it with `ln -sf AGENTS.md CLAUDE.md`. A copy is how the two instruction files silently diverge. |
+| `expected AGDR-YYYY-MM-DD-NNN-short-title.md` | Rename the record. A misnamed record does not sort into the log. Increment `NNN` for that day rather than reusing a number. |
+| `approved snapshots are immutable` / `no prototypeSha256 recorded` | Do not edit an approved prototype in place. Restore the bytes and add a new approved version instead. |
 | `shell syntax error` / `not executable` / `missing shebang` | Fix the script. Every `*.sh` needs `#!/bin/sh`, `set -eu`, and the executable bit (`chmod +x`). |
 | `looks like it contains a credential` | Stop. Rotate the credential first, then scrub it — a commit is not needed for it to be leaked. Never silence this by adding an exemption. |
 | `.env.example: 'X' has a populated value` | Replace the value with `<placeholder>`. Only names and placeholders belong in that file. |

@@ -1,0 +1,14 @@
+{
+  "project": "BotOS",
+  "projectId": "4af04c9e-6f41-40a6-9252-a7386d4afcee",
+  "openDesignProject": "botos-4dn3",
+  "approvedRunId": "9d571e4a-030e-404a-a40e-564881e0faf5",
+  "operatorApproved": true,
+  "prototypeSha256": "7e581c9b11ed987d9f73b2bb374d6b20309e3961f0aaaab324ae4d889d0bf144",
+  "prototypeBytes": 125231,
+  "browserChecksPassed": 12,
+  "followUpTicket": "SYM-753",
+  "followUpTicketId": "2b55e95f-4575-4150-b618-ccb71ca01618",
+  "followUpStatus": "Backlog",
+  "scope": "Product design and illustrative prototype; live agent/workstation implementation is not part of this deliverable"
+}

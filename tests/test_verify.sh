@@ -44,6 +44,64 @@ run_verify "$fx"
 assert_fails "$last_status" "missing scripts/test.sh"
 assert_contains "$last_output" "missing required file: scripts/test.sh" "missing scripts/test.sh"
 
+# --- check_claude_symlink -------------------------------------------------
+
+it "fails when CLAUDE.md is a regular file instead of a symlink"
+fx=$(fixture_new)
+rm "$fx/CLAUDE.md"
+printf '# BotOS\n\nA copy, not a link.\n' > "$fx/CLAUDE.md"
+run_verify "$fx"
+assert_fails "$last_status" "CLAUDE.md copied"
+assert_contains "$last_output" "CLAUDE.md is not a symlink" "CLAUDE.md copied"
+
+it "fails when CLAUDE.md points somewhere other than AGENTS.md"
+fx=$(fixture_new)
+rm "$fx/CLAUDE.md"
+ln -s README.md "$fx/CLAUDE.md"
+run_verify "$fx"
+assert_fails "$last_status" "CLAUDE.md mistargeted"
+assert_contains "$last_output" "expected the relative target AGENTS.md" "CLAUDE.md mistargeted"
+
+# The control case only proves the symlink survives if the fixture copies it as
+# one. If cp ever stops preserving links, this is the case that says so.
+it "carries CLAUDE.md into the fixture as a symlink"
+fx=$(fixture_new)
+if [ -L "$fx/CLAUDE.md" ]; then
+	:
+else
+	fail_case "fixture symlink: CLAUDE.md was dereferenced by fixture_new"
+fi
+
+# --- check_agdr_naming ----------------------------------------------------
+
+it "fails on a decision record with a malformed name"
+fx=$(fixture_new)
+cp -p "$fx/docs/agdr/AGDR-0000-template.md" "$fx/docs/agdr/notes-about-things.md"
+run_verify "$fx"
+assert_fails "$last_status" "malformed AGDR name"
+assert_contains "$last_output" "expected AGDR-YYYY-MM-DD-NNN-short-title.md" "malformed AGDR name"
+
+it "leaves the template and README out of the naming rule"
+fx=$(fixture_new)
+run_verify "$fx"
+assert_not_contains "$last_output" "AGDR-0000-template.md: expected" "AGDR exemptions"
+
+# --- check_approved_design ------------------------------------------------
+
+it "fails when the approved prototype no longer matches its manifest hash"
+fx=$(fixture_new)
+printf '<!-- edited after approval -->\n' >> "$fx/docs/design/approved/prototype.html"
+run_verify "$fx"
+assert_fails "$last_status" "prototype edited"
+assert_contains "$last_output" "approved snapshots are immutable" "prototype edited"
+
+it "fails when the manifest records no prototype hash"
+fx=$(fixture_new)
+edit_file "$fx/docs/design/approved/manifest.json" 's/"prototypeSha256"/"wasPrototypeSha256"/'
+run_verify "$fx"
+assert_fails "$last_status" "manifest hash removed"
+assert_contains "$last_output" "no prototypeSha256 recorded" "manifest hash removed"
+
 # --- check_license --------------------------------------------------------
 
 it "fails when LICENSE is no longer the MIT License"

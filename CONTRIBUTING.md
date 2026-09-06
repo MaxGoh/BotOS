@@ -1,7 +1,9 @@
 # Contributing to BotOS
 
 Humans and agents follow the same rules. This is the short version;
-[`AGENTS.md`](AGENTS.md) is the detailed contract and takes precedence.
+[`AGENTS.md`](AGENTS.md) is the detailed contract and takes precedence, and
+[`docs/conventions.md`](docs/conventions.md) has the fuller conventions.
+Start a session with [`docs/BUILD.md`](docs/BUILD.md).
 
 ## Getting set up
 

@@ -1,5 +1,5 @@
 ---
-# AGDR-2026-09-05-002: Test the scaffold, and ship the verify skills
+# AGDR-2026-09-05-003: Test the scaffold, and ship the verify skills
 
 **Date:** 2026-09-05
 **Type:** infra

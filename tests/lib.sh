@@ -88,12 +88,16 @@ assert_not_contains() {
 # git repo, so verify.sh's `git ls-files` sees the file set a real checkout
 # would. Uncommitted work is included on purpose: the gate is meant to cover
 # changes before they are committed, so the tests must too.
+#
+# `cp -P` is load-bearing: CLAUDE.md is a symlink to AGENTS.md, and without -P
+# cp copies what it points at. The fixture would then hold a regular file and
+# check_claude_symlink would fail in every case for a reason no case is about.
 fixture_new() {
 	_dir=$(mktemp -d "$TESTS_TMP/fixture.XXXXXX")
 	( cd "$REPO_ROOT" && git ls-files --cached --others --exclude-standard ) \
 	| while IFS= read -r _f; do
 		mkdir -p "$_dir/$(dirname "$_f")"
-		cp -p "$REPO_ROOT/$_f" "$_dir/$_f"
+		cp -Pp "$REPO_ROOT/$_f" "$_dir/$_f"
 	done
 	git -C "$_dir" init -q
 	printf '%s\n' "$_dir"
