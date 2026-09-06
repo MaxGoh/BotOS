@@ -11,15 +11,14 @@ dimensions scored `absent` and the level was **Not ready**.
 The foundation scaffold moved five dimensions to `present` and two to
 `partial`. The level remains **Not ready**, and that is the honest result: the
 rollup requires no dimension to be `absent`, and dimensions 6 (skills) and 9
-(full runnability) cannot be satisfied until BotOS has a product definition and
-application code. **The remaining gaps are bounded by the repository being
+(full runnability) cannot be satisfied until BotOS has application code. **The remaining gaps are bounded by the repository being
 greenfield, not by the quality of the scaffold.**
 
 ## Dimension scorecard
 
 | # | Dimension | Score | Notes |
 |---|-----------|-------|-------|
-| 1 | Agent instructions | present | `AGENTS.md` covers architecture, commands, conventions, guardrails; `CLAUDE.md` points to it so harnesses share one source of truth. |
+| 1 | Agent instructions | present | `AGENTS.md` covers architecture, commands, conventions, guardrails; `CLAUDE.md` is a relative symlink to it so harnesses share one source of truth. |
 | 2 | Decision records | present | `docs/agdr/` with `README.md` (when/how), `AGDR-0000-template.md`, and a first real record for this change. |
 | 3 | Codebase orientation | present | `docs/DEPENDENCY-GRAPH.md` maps every directory. The module-edge section is deliberately empty — there is no application code to draw — and is marked TODO for the first module. |
 | 4 | Build / test / verify loop | partial | `make verify` is real, enforced in CI, and was negative-tested. But there is no build step and no test suite: `make test` fails loudly rather than passing vacuously. Upgrades to `present` when a real suite lands. |
@@ -82,11 +81,13 @@ Not merely written — exercised:
   application code existing at all.
 - **Dimension 4** — `make test` deliberately exits non-zero. Replace the stub
   with a real runner and register it in `run_all` in `scripts/verify.sh`.
-- **Product definition** — `AGENTS.md` "What This Is" and the module-edge
-  section of `docs/DEPENDENCY-GRAPH.md` are marked unfilled on purpose. The
-  approved design was not available in the project attachments (the Brain note
-  is an empty template), and guessing the product from the repository name
-  would have written fiction into the contract. A human should fill these.
+- **Product definition** — *Corrected 2026-09-06.* The approved product
+  design was not reachable from the box that produced this report, so
+  `AGENTS.md` and `docs/DEPENDENCY-GRAPH.md` were left product-shaped and
+  unfilled. The design was in fact already approved; it has since been
+  transferred into `docs/design/` and both files now carry the real product
+  definition. See `docs/agdr/AGDR-2026-09-06-001-apply-approved-design.md`.
+  The scores below predate that change and have not been re-evaluated.
 
 No suspected committed secrets were found.
 

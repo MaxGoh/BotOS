@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "checks": [
+    "Four-worker roster renders",
+    "Split view opens beside conversation",
+    "Expanded workstation mode opens",
+    "All-workstations overview shows four screens",
+    "Private takeover masks selected screen",
+    "Private takeover masks overview screen",
+    "Explicit teaching restores observation",
+    "Handback requires explicit readiness confirmation",
+    "Confirmed handback restores agent screen",
+    "Paused playback freezes freshness",
+    "Disconnected filter isolates held workstation",
+    "No browser JavaScript errors"
+  ],
+  "source": "saved approved standalone HTML",
+  "scope": "Prototype UI only; no live workstation or backend integrations tested"
+}
